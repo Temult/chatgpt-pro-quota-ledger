@@ -1,0 +1,24 @@
+{
+  "name": "chatgpt-pro-quota-ledger",
+  "version": "0.3.4",
+  "private": true,
+  "description": "A local, privacy-conscious Pro-message ledger for the ChatGPT web interface.",
+  "scripts": {
+    "test": "node scripts/run_tests.cjs",
+    "check": "node --check chatgpt-pro-quota-ledger.user.js && node scripts/check_repository.cjs && node scripts/run_tests.cjs",
+    "test:browser": "python scripts/run_browser_tests.py",
+    "package": "python scripts/package_release.py"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Temult/chatgpt-pro-quota-ledger.git"
+  },
+  "homepage": "https://github.com/Temult/chatgpt-pro-quota-ledger",
+  "bugs": {
+    "url": "https://github.com/Temult/chatgpt-pro-quota-ledger/issues"
+  }
+}

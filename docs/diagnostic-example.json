@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "tool": "ChatGPT Pro Quota Ledger",
+  "version": "0.3.4",
+  "generated_at": "2026-10-12T12:00:00.000Z",
+  "capture_enabled": true,
+  "retention": {
+    "days": 7,
+    "max_events": 150
+  },
+  "quota": {
+    "configured_limit": 50,
+    "limit_source": "Pro $100 plan (automatic)",
+    "detected_plan": "prolite",
+    "estimated_remaining": 48,
+    "locally_observed": 2,
+    "automatic": 2,
+    "manual_only": 0,
+    "local_history_partial": true,
+    "currently_blocked": false,
+    "next_reset": {
+      "at": "2026-10-19T12:00:00.000Z",
+      "evidence": "local-rollover"
+    }
+  },
+  "display_mode": "both",
+  "synchronization": {
+    "local_storage_accessible": true,
+    "event_records": 3,
+    "status_records": 0,
+    "ledger_checksum": "b744e9e7"
+  },
+  "diagnostics": [
+    {
+      "at": "2026-10-12T12:00:00.000Z",
+      "kind": "account-plan",
+      "outcome": "detected",
+      "source": "accounts",
+      "plan": "prolite"
+    },
+    {
+      "at": "2026-10-12T12:00:00.000Z",
+      "kind": "submission",
+      "outcome": "counted",
+      "source": "fetch",
+      "endpoint": "conversation",
+      "model": "gpt-6-pro"
+    },
+    {
+      "at": "2026-10-12T12:00:00.000Z",
+      "kind": "manual",
+      "outcome": "added"
+    },
+    {
+      "at": "2026-10-12T12:00:00.000Z",
+      "kind": "submission",
+      "outcome": "manual-linked",
+      "source": "fetch",
+      "endpoint": "conversation",
+      "model": "gpt-6-pro"
+    }
+  ]
+}

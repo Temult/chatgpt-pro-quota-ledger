@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "version": "0.3.4",
+  "prepared_at": "2026-10-13",
+  "scope": "Documentation and release tooling only; runtime and userscript header preserved.",
+  "baseline": {
+    "source_archive": "ChatGPT-Pro-Quota-Ledger-v0.3.4-Source.zip",
+    "source_archive_sha256": "08910b9977dab5f1a893aa9a681c953bfa916115ec091ab72d26b6d05cd527d4",
+    "install_archive_sha256": "32dab8b5dd9658b5cdf384975bb5775dc1d7cede633b152e65445932cb7428c0",
+    "userscript_sha256": "c03ebdb52da129fb5e07aeb697b689e791cf57e541a673df8b9b6a3452f46547"
+  },
+  "comment_blocks_added": 45,
+  "upstream_license": {
+    "repository": "BlueSkyXN/CPA-Panel-LTS",
+    "path": "LICENSE",
+    "git_blob_sha": "82cc6a2bdcb93479d9b9cc5f852a49cbf5229b01"
+  },
+  "publication_status": "prepared locally, not published",
+  "live_validation": "User accepted v0.3.4 interface in this conversation; no independent live account replay or billing reconciliation."
+}

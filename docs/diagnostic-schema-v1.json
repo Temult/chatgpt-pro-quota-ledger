@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ChatGPT Pro Quota Ledger diagnostic report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool", "version", "generated_at", "capture_enabled", "retention", "quota", "display_mode", "synchronization", "diagnostics"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "tool": { "const": "ChatGPT Pro Quota Ledger" },
+    "version": { "type": "string" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "capture_enabled": { "type": "boolean" },
+    "retention": {
+      "type": "object", "additionalProperties": false,
+      "required": ["days", "max_events"],
+      "properties": { "days": { "const": 7 }, "max_events": { "const": 150 } }
+    },
+    "quota": {
+      "type": "object", "additionalProperties": false,
+      "required": ["configured_limit", "limit_source", "detected_plan", "estimated_remaining", "locally_observed", "automatic", "manual_only", "local_history_partial", "currently_blocked", "next_reset"],
+      "properties": {
+        "configured_limit": { "type": "integer", "minimum": 1 },
+        "limit_source": { "type": "string" },
+        "detected_plan": { "type": "string", "enum": ["prolite", "pro", "promax", "plus", "go", "free", "unknown"] },
+        "estimated_remaining": { "type": "integer", "minimum": 0 },
+        "locally_observed": { "type": "integer", "minimum": 0 },
+        "automatic": { "type": "integer", "minimum": 0 },
+        "manual_only": { "type": "integer", "minimum": 0 },
+        "local_history_partial": { "type": "boolean" },
+        "currently_blocked": { "type": "boolean" },
+        "next_reset": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "object", "required": ["at", "evidence"], "additionalProperties": false,
+              "properties": { "at": { "type": "string", "format": "date-time" },
+                "evidence": { "enum": ["server", "projected", "local-rollover"] } } }
+          ]
+        }
+      }
+    },
+    "display_mode": { "enum": ["both", "picker", "floating"] },
+    "synchronization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["local_storage_accessible", "event_records", "status_records", "ledger_checksum"],
+      "properties": {
+        "local_storage_accessible": { "type": "boolean" },
+        "event_records": { "type": "integer", "minimum": 0 },
+        "status_records": { "type": "integer", "minimum": 0 },
+        "ledger_checksum": { "type": ["string", "null"], "pattern": "^[a-f0-9]{8}$" }
+      }
+    },
+    "diagnostics": {
+      "type": "array", "maxItems": 150,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["at", "kind"],
+        "properties": {
+          "at": { "type": "string", "format": "date-time" },
+          "kind": { "enum": ["submission", "manual", "account-plan", "model-limit"] },
+          "outcome": { "enum": ["counted", "manual-linked", "retry-suppressed", "rejected", "not-pro", "unreadable-body", "request-error", "added", "undone", "detected", "blocked", "unblocked"] },
+          "source": { "enum": ["fetch", "xhr", "accounts", "usage", "subscription", "init", "site"] },
+          "endpoint": { "enum": ["conversation", "f/conversation"] },
+          "model": { "type": "string", "maxLength": 64 },
+          "plan": { "enum": ["prolite", "pro", "promax", "plus", "go", "free"] },
+          "http_status": { "type": "integer", "minimum": 100, "maximum": 599 },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 10000 }
+        }
+      }
+    }
+  }
+}
