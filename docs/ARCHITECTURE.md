@@ -1,6 +1,6 @@
 # Architecture and maintainer map
 
-This describes the **actual v0.3.4 implementation**, including its compromises. The single `chatgpt-pro-quota-ledger.user.js` file is both source and distribution. There is no bundled alternative implementation. Added `PQL-DOC` JSDoc comments can be removed to reconstruct the accepted predecessor exactly; [provenance](provenance.json) and `scripts/check_repository.cjs` bind that claim to its SHA-256.
+This describes the implementation, including its compromises. The single `chatgpt-pro-quota-ledger.user.js` file is both source and distribution. There is no bundled alternative implementation. The `PQL-DOC` comments document the executable source; [provenance](provenance.json) and `scripts/check_repository.cjs` bind this release to its source hash and retain the v0.3.4 predecessor record.
 
 ## The design in one pass
 

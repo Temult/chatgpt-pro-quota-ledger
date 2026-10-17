@@ -1,4 +1,4 @@
-# Install ChatGPT Pro Quota Ledger v0.3.4
+# Install ChatGPT Pro Quota Ledger v0.3.5
 
 This is an unofficial Tampermonkey userscript for ordinary ChatGPT web chats.
 It estimates Pro-message usage locally. It does not bypass limits or supply an
@@ -20,10 +20,10 @@ Click the pill for display placement or **Full settings…**. Full settings open
 temporarily and closing it returns to your chosen display. **Alt+Shift+Q**
 restores Both displays and opens Settings if the picker becomes unavailable.
 
-## Already using v0.3.4?
+## Upgrading from v0.3.4
 
-There is **no runtime change in this documented build**, so reinstalling is not
-necessary. Source comments and repository documentation were added. Earlier
+Version 0.3.5 fixes weekly rollover accounting. Install the updated userscript
+and refresh open ChatGPT tabs. Existing usage history and settings are preserved. Earlier
 v0.2/v0.3 records use the same keys; keep the existing browser profile and do
 not clear site storage while upgrading. Old tabs must be refreshed after an
 actual script update. Disable duplicates rather than running two versions.

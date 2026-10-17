@@ -108,8 +108,11 @@ async function tick(){for(let i=0;i<5;i++)await Promise.resolve();}
 function scopedCount(t, profile='Default', ms=t.clock.ms) {
   const status = t.statuses(profile);
   const anchors=status.map(x=>Date.parse(x.until)).filter(x=>Number.isFinite(x)&&x<=ms);
-  const since=Math.max(ms-7*86400e3, anchors.length?Math.max(...anchors):0);
-  const ev=t.events(profile).filter(e=>e.at>=since);
+  const anchor=anchors.length?Math.max(...anchors):null;
+  const elapsed=anchor===null?null:Math.floor((ms-anchor)/(7*86400e3));
+  const currentCycle=elapsed===null?0:anchor+Math.max(0,elapsed)*(7*86400e3);
+  const since=Math.max(ms-7*86400e3,currentCycle);
+  const ev=t.events(profile).filter(e=>e.at>=since&&e.at<=ms+1000);
   const autos=ev.filter(e=>e.type==='auto');
   const linked=new Set(autos.map(e=>e.manualId).filter(Boolean));
   return autos.length+ev.filter(e=>e.type==='manual'&&!linked.has(e.id)).length;

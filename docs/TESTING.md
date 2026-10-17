@@ -54,4 +54,4 @@ The source archive must be extractable into a clean directory and pass `npm run 
 
 Try one normal, useful Pro submission with one script version enabled; do not spend quota solely to exercise a test. Check one count, no change for a non-Pro send, Pro-only pill visibility, single-click placement, dropdown usability, temporary settings close, focused-tab synchronization, and a previewed diagnostic report. A second browser or another device is not expected to share the count.
 
-The v0.3.4 interface was used in a live Chrome session during development. Source documentation does not change executable behavior. Server-side quota reconciliation and compatibility across languages, mobile layouts, accessibility tools, and future UI revisions remain outside the test coverage.
+The v0.3.4 interface was used in a live Chrome session during development. The v0.3.5 counting patch has synthetic regressions; it does not alter the native model-picker UI. Server-side quota reconciliation and compatibility across languages, mobile layouts, accessibility tools, and future UI revisions remain outside the test coverage.
