@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "version": "0.3.4",
-  "prepared_at": "2026-10-13",
-  "scope": "Documentation and release tooling only; runtime and userscript header preserved.",
+  "version": "0.3.5",
+  "prepared_at": "2026-10-17",
+  "scope": "Runtime fix: projected cycle counting synchronized with displayed reset date; earlier v0.3.4 provenance retained as historical baseline.",
   "baseline": {
     "source_archive": "ChatGPT-Pro-Quota-Ledger-v0.3.4-Source.zip",
     "source_archive_sha256": "08910b9977dab5f1a893aa9a681c953bfa916115ec091ab72d26b6d05cd527d4",
@@ -15,6 +15,7 @@
     "path": "LICENSE",
     "git_blob_sha": "82cc6a2bdcb93479d9b9cc5f852a49cbf5229b01"
   },
-  "publication_status": "prepared locally, not published",
-  "live_validation": "User accepted v0.3.4 interface in this conversation; no independent live account replay or billing reconciliation."
+  "publication_status": "local candidate; not published",
+  "live_validation": "User accepted v0.3.4 interface in this conversation; no independent live account replay or billing reconciliation.",
+  "release_userscript_sha256_without_comments": "082cd8d85c2be0054e3988d6052b9e14af48289c4488437cb8d8a1105cc38984"
 }

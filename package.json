@@ -1,6 +1,6 @@
 {
   "name": "chatgpt-pro-quota-ledger",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "private": true,
   "description": "A local, privacy-conscious Pro-message ledger for the ChatGPT web interface.",
   "scripts": {

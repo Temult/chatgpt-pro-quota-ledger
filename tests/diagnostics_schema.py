@@ -23,5 +23,5 @@ assert list(validator.iter_errors(contaminated)), 'Extra root fields must fail s
 contaminated = copy.deepcopy(report)
 contaminated['diagnostics'][0]['prompt'] = 'SYNTHETIC PRIVATE TEXT'
 assert list(validator.iter_errors(contaminated)), 'Extra event fields must fail schema validation'
-assert report['version'] == '0.3.4'
+assert report['version'] == '0.3.5'
 print('DIAGNOSTICS_SCHEMA_PASS: fresh actual-script report; strict schema; extra sensitive fields rejected')

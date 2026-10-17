@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Explicit reviewed publication paths only. No private screenshots, archived builds, diagnostic captures or ad hoc logs.",
   "source_files": [
     ".editorconfig",
@@ -36,6 +36,7 @@
     "docs/images/picker-demo.png",
     "docs/provenance.json",
     "docs/releases/v0.3.4.md",
+    "docs/releases/v0.3.5.md",
     "package.json",
     "release-files.json",
     "requirements-dev.txt",

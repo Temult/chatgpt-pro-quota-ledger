@@ -21,8 +21,8 @@ function main() {
   assert.equal(runtimeVersion, pkg.version, 'Runtime/package version mismatch');
   assert.equal(provenance.version, pkg.version, 'Provenance/version mismatch');
   assert.equal((code.match(/\/\*\* PQL-DOC\n/g) || []).length, provenance.comment_blocks_added);
-  assert.equal(sha256(stripDocumentation(code)), provenance.baseline.userscript_sha256,
-    'Documentation-only boundary failed: the original v0.3.4 source cannot be reconstructed');
+  assert.equal(sha256(stripDocumentation(code)), provenance.release_userscript_sha256_without_comments,
+    'Runtime payload does not match the reviewed v0.3.5 source identity');
   for (const requirement of ['// @grant        none','// @noframes','// @match        https://chatgpt.com/*']) {
     assert.ok(code.includes(requirement), `Missing metadata invariant: ${requirement}`);
   }
@@ -53,7 +53,7 @@ function main() {
     }
   }
   for (const name of names.filter(n => n.endsWith('.json'))) JSON.parse(read(name));
-  console.log(`REPOSITORY_CHECK_PASS: ${names.length} allowlisted files; local links; version; ${provenance.comment_blocks_added} comments; original source reconstructed`);
+  console.log(`REPOSITORY_CHECK_PASS: ${names.length} allowlisted files; local links; version; ${provenance.comment_blocks_added} comments; runtime payload SHA-256 verified`);
 }
 module.exports = {stripDocumentation, sha256};
 if (require.main === module) {

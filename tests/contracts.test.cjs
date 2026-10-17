@@ -7,15 +7,14 @@ const {createTab, sharedStore, report, tick, PREFIX} = require('./helpers/browse
 const {stripDocumentation, sha256} = require('../scripts/check_repository.cjs');
 const profilePrefix = `${PREFIX}Default:`;
 
-// Characterization tests deliberately preserve known v0.3.4 limitations. They
-// document current behavior, not desired behavior or server billing rules.
-test('documentation-only source reconstructs the accepted predecessor exactly', () => {
+// Characterization tests distinguish current behavior from server billing rules.
+test('userscript source matches its v0.3.5 source digest; v0.3.4 predecessor remains recorded', () => {
   const code = fs.readFileSync(path.join(__dirname,'..','chatgpt-pro-quota-ledger.user.js'),'utf8');
   const provenance = require('../docs/provenance.json');
-  assert.equal(sha256(stripDocumentation(code)), provenance.baseline.userscript_sha256);
-  assert.notEqual(sha256(code), provenance.baseline.userscript_sha256, 'Comments really were added');
+  assert.equal(sha256(stripDocumentation(code)), provenance.release_userscript_sha256_without_comments);
+  assert.notEqual(sha256(stripDocumentation(code)), provenance.baseline.userscript_sha256, 'This runtime release intentionally fixes v0.3.4');
   assert.notEqual(sha256(stripDocumentation(code.replace('const QUOTA_DEFAULT = 50;', 'const QUOTA_DEFAULT = 51;'))),
-    provenance.baseline.userscript_sha256, 'A runtime change must fail the preservation check');
+    provenance.release_userscript_sha256_without_comments, 'Unexpected runtime changes fail the source check');
 });
 
 test('fetch forwards exact original arguments and returns the original promise', async () => {
