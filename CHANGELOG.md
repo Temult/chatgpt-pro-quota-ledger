@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.5 - 2026-10-17
+
+- Apply the same projected weekly reset boundary to usage counting and next reset date.
+- Preserve all stored events, profile settings and prior server observations.
+- Label counts after inferred future rollovers as estimated since projected reset, not confirmed.
+- Add time-boundary regressions reproducing the 1/50 after reset defect.
+
 ## Publication preparation - 2026-10-13
 
 - Document the accepted v0.3.4 source with reversible JSDoc comments; no runtime or metadata-header change.

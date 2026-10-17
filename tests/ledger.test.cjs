@@ -502,3 +502,60 @@ test('diagnostics retain full quota evidence despite capture being disabled',asy
   assert.match(html,/configured_limit/);
   assert.match(html,/estimated_remaining/);
 });
+
+
+test('Oct 17 turnover resets remaining counter at the same projected boundary as Oct 24 date',async()=>{
+  const base=Date.parse('2026-10-10T15:30:42.248749Z');
+  const after=base+7*86400e3+70*60000;
+  const previous=base+4*86400e3;
+  const initial={
+    [`${PREFIX}Default:status:last-confirmed`]:JSON.stringify({kind:'reset',at:base,until:new Date(base).toISOString()}),
+    [`${PREFIX}Default:detected-plan`]:JSON.stringify({slug:'prolite',source:'accounts',at:previous})
+  };
+  for(let i=0;i<48;i++)initial[`${PREFIX}Default:event:auto-${i}`]=JSON.stringify({
+    id:`auto-${i}`,type:'auto',at:previous+i,model:'gpt-6-pro',tab:'other'
+  });
+  initial[`${PREFIX}Default:event:manual`]=JSON.stringify({
+    id:'manual',type:'manual',at:previous+60,tab:'other'
+  });
+  const store=sharedStore(initial);const t=createTab(store,{body:true,now:after});
+  t.rendered.shadow.click({target:{closest:()=>({dataset:{action:'toggle'}})}});
+  const ui=t.rendered.shadow.surface.innerHTML;
+  assert.match(ui,/50\/50 remaining/,'49 events from previous cycle must not reduce new balance');
+  assert.match(ui,/Oct 24/);
+  assert.match(ui,/since projected reset/,'do not label projected cycle as confirmed');
+  assert.equal(t.events().length,49,'retained events must not be erased');
+  await t.send(t.request('gpt-6-pro','new-cycle'));
+  assert.match(t.rendered.shadow.surface.innerHTML,/49\/50 remaining/);
+  assert.equal(t.events().length,50);
+});
+
+test('exact projected reset boundary and later cycles exclude events without deleting them',async()=>{
+  const anchor=Date.parse('2026-10-10T15:30:42.248Z');
+  const initial={
+    [`${PREFIX}Default:status:reset`]:JSON.stringify({kind:'reset',at:anchor,until:new Date(anchor).toISOString()}),
+    [`${PREFIX}Default:event:old`]:JSON.stringify({type:'auto',id:'old',at:anchor+86400000})
+  };
+  const store=sharedStore(initial);
+  const t=createTab(store,{body:true,now:anchor+7*86400e3-1});
+  assert.equal(scopedCount(t),1);
+  t.clock.ms=anchor+7*86400e3;
+  t.rendered.shadow.click({target:{closest:()=>({dataset:{action:'toggle'}})}});
+  assert.equal(scopedCount(t),0);
+  assert.match(t.rendered.shadow.surface.innerHTML,/50\/50 remaining/);
+  t.clock.ms=anchor+21*86400e3+1;
+  assert.equal(scopedCount(t),0);
+  assert.equal(t.events().length,1);
+  assert.match(t.rendered.shadow.surface.innerHTML,/50\/50 remaining/);
+});
+
+test('without a known server reset, counting stays a rolling estimate',async()=>{
+ const now=Date.parse('2026-10-17T16:40:00Z');
+ const t=createTab(sharedStore({
+   [`${PREFIX}Default:event:old`]:JSON.stringify({id:'old',type:'auto',at:now-6*86400e3})
+ }),{body:true,now});
+ assert.equal(scopedCount(t),1);
+ t.rendered.shadow.click({target:{closest:()=>({dataset:{action:'toggle'}})}});
+ assert.match(t.rendered.shadow.surface.innerHTML,/49\/50 remaining/);
+ assert.match(t.rendered.shadow.surface.innerHTML,/partial local history/);
+});

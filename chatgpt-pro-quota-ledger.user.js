@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ChatGPT Pro Quota Ledger (Local)
 // @namespace    local.chatgpt.pro-quota-ledger
-// @version      0.3.4
+// @version      0.3.5
 // @description  Estimate remaining Pro messages with optional, privacy-minimized diagnostics and reset information.
 // @match        https://chatgpt.com/*
 // @run-at       document-start
@@ -23,7 +23,7 @@
 */
 /** PQL-DOC
  * @file ChatGPT Pro Quota Ledger: observations first, estimates second.
- * @version 0.3.4 (publication documentation pass; runtime unchanged)
+ * @version 0.3.5 (weekly rollover accounting fix)
  *
  * One installable file, no runtime dependencies and no standalone network
  * requests. The fetch/XHR wrappers observe requests made by the page. They
@@ -46,7 +46,7 @@
  * @typedef {{model:string, key:(string|null)}} Submission
  * @typedef {{iso:string, source:ResetEvidence}} ResetProjection
  * @typedef {{used:number, auto:number, manual:number,
- *  blockedUntil:(string|null), anchor:(number|null), partial:boolean,
+ *  blockedUntil:(string|null), anchor:(number|null), boundaryBasis:string, partial:boolean,
  *  since:number}} CountSnapshot
  * @typedef {{max:number, source:string, plan:string, slug:(string|null)}} QuotaInfo
  *
@@ -65,7 +65,7 @@
   const PREFIX = 'local_chatgpt_pro_quota_ledger_v2:';
   const ACTIVE = `${PREFIX}active-profile`;
   const MIGRATED = `${PREFIX}migrated-v1`;
-  const VERSION = '0.3.4';
+  const VERSION = '0.3.5';
   const QUOTA_DEFAULT = 50;
   const DAY_MS = 86400 * 1000;
   const WEEK_MS = 7 * DAY_MS;
@@ -513,6 +513,17 @@
       s.kind === 'blocked' ? Date.parse(s.until) : NaN).filter(t => Number.isFinite(t) && t <= now);
     return times.length ? Math.max(...times) : null;
   }
+  /**
+   * Return the start of the projected weekly cycle containing `now`.
+   * A reported reset remains historical evidence; later boundaries inferred
+   * from it are estimates, not fresh server confirmations.
+   * Calendar arithmetic is shared by the counter and reset-date display.
+   */
+  function projectedCycleStart(anchor, now = Date.now()) {
+    if (!Number.isFinite(anchor) || now < anchor) return null;
+    const cycles = Math.floor((now - anchor) / WEEK_MS);
+    return anchor + cycles * WEEK_MS;
+  }
   /** PQL-DOC
    * Prefer an active reported block, then project from a past boundary,
    * then try the oldest stored event plus seven days. No automatic request.
@@ -527,8 +538,8 @@
     if (Number.isFinite(data.anchor)) {
       // A projection, NOT a service promise: the Chat model's allowance may
       // use a rolling window or a different scheduling rule.
-      const steps = Math.floor((now - data.anchor) / WEEK_MS) + 1;
-      return { iso: new Date(data.anchor + Math.max(1, steps) * WEEK_MS).toISOString(), source: 'projected' };
+      const cycleStart = projectedCycleStart(data.anchor, now);
+      return { iso: new Date((cycleStart ?? data.anchor) + WEEK_MS).toISOString(), source: 'projected' };
     }
     const observed = events(profile).filter(e => e.at <= now).sort((a, b) => a.at - b.at)[0];
     if (observed && observed.at + WEEK_MS > now) {
@@ -539,8 +550,10 @@
   /** PQL-DOC
    * Derive, do not persist, the displayed usage total. Count auto events
    * plus manual events not linked by an auto event inside the same window.
-   * Use max(now - 7 days, latest elapsed boundary), inclusive at the start.
-   * partial=false means a boundary exists, not that all account use was seen.
+   * Use max(now - 7 days, the current projected weekly cycle boundary).
+   * A projection is not a server confirmation. All event records are retained;
+   * this only changes which ones are counted in the displayed allowance.
+   * partial=false means a historical boundary exists, not complete usage.
    * @param {string} profile
    * @param {number} [now]
    * @returns {CountSnapshot}
@@ -548,13 +561,15 @@
   function counted(profile, now = Date.now()) {
     const observedStatuses = statuses(profile);
     const boundary = lastReset(observedStatuses, now);
-    const windowStart = Math.max(now - WEEK_MS, boundary || 0);
+    const cycleStart = boundary === null ? null : projectedCycleStart(boundary, now);
+    const windowStart = Math.max(now - WEEK_MS, cycleStart ?? 0);
     const relevant = events(profile).filter(e => e.at >= windowStart && e.at <= now + 1000);
     const autos = relevant.filter(e => e.type === 'auto');
     const matchedManualIds = new Set(autos.map(e => e.manualId).filter(Boolean));
     const manualOnly = relevant.filter(e => e.type === 'manual' && !matchedManualIds.has(e.id));
     return { used: autos.length + manualOnly.length, auto: autos.length, manual: manualOnly.length,
       blockedUntil: currentBlock(observedStatuses, now), anchor: boundary,
+      boundaryBasis: boundary === null ? 'local' : cycleStart > boundary ? 'projected' : 'observed',
       partial: boundary === null, since: windowStart };
   }
   // No single shared read-modify-write array: every event has its own key,
@@ -1588,7 +1603,7 @@
         <button data-action="toggle" aria-label="${temporaryPanelVisit?.profile === profile ? 'Close temporary settings and restore counter placement' : 'Collapse'}" title="${temporaryPanelVisit?.profile === profile ? 'Close and return to previous placement' : 'Collapse'}">${temporaryPanelVisit?.profile === profile ? '×' : '▴'}</button></span></div>
       ${temporaryPanelVisit?.profile === profile ? `<small class="muted">Temporary settings view · ${safe(displayMode(profile) === 'picker' ? 'close × to return to Picker only' : 'close × to return to your selected layout')}</small>` : ''}
       <div class="big ${data.blockedUntil ? 'warn' : ''}">${remaining}/${max} remaining</div>
-      <div class="muted">${data.blockedUntil ? 'Server-confirmed Pro restriction' : data.partial ? 'Estimate from partial local history' : 'Estimated · since confirmed reset'}</div>
+      <div class="muted">${data.blockedUntil ? 'Server-confirmed Pro restriction' : data.partial ? 'Estimate from partial local history' : data.boundaryBasis === 'projected' ? 'Estimated · since projected reset' : 'Estimated · since observed reset'}</div>
       <div class="bar"><div style="width:${(100*Math.min(1,remaining/max)).toFixed(1)}%"></div></div>
       <div class="${data.blockedUntil ? 'warn' : 'muted'}">${safe(resetLine)}</div>
       ${budgetLine}

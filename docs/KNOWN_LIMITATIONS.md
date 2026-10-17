@@ -1,6 +1,6 @@
 # Known limitations and preserved edge cases
 
-The public candidate is a useful local estimator, not a provider billing instrument. This documentation pass intentionally preserves the accepted v0.3.4 executable behavior. The cases below are maintainer follow-ups, not claims that they were silently fixed. Characterization tests lock down what the current version actually does so a later fix can be deliberate.
+The public script is a local estimator, not a provider billing instrument. Version 0.3.5 repairs projected-week accounting while preserving stored events. The remaining limitations below are not fixed by that change.
 
 ## Counting and scope
 
@@ -12,7 +12,7 @@ The public candidate is a useful local estimator, not a provider billing instrum
 
 ## Reset and capacity
 
-**The seven-day window is a model assumption.** The ledger uses a trailing seven-day count, restricted by the latest elapsed observed boundary. The projected full-reset date and trailing count are not a formal provider quota algorithm. An elapsed reported deadline does not confirm access returned, and an existing boundary does not prove complete history.
+**The seven-day window is a model assumption.** When an earlier server-reported reset is known, the ledger counts only events since the most recent projected seven-day boundary; without that anchor it uses a trailing seven-day window. A projected rollover and its count are not a formal provider quota algorithm. An elapsed reported deadline does not confirm access returned, and an existing boundary does not prove complete history.
 
 **A missing next date can have a local cause.** With no reset anchor, `nextReset` considers the oldest retained event rather than the oldest event still in the active window. An event from eight days ago plus a recent event can therefore produce no date. This does not imply the server has no reset.
 

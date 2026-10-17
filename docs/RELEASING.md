@@ -1,12 +1,12 @@
 # Prepare and publish a release
 
-Intended repository: `Temult/chatgpt-pro-quota-ledger`. Nothing in this source archive creates a repository, pushes a commit, grants permissions, or publishes a release. The first proposed release is **v0.3.4, prerelease**. The userscript version stays 0.3.4 because this preparation does not change runtime behavior or its metadata header.
+Intended repository: `Temult/chatgpt-pro-quota-ledger`. Nothing in this source archive creates a repository, pushes a commit, grants permissions, or publishes a release. The current candidate is **v0.3.5**, fixing the reset-week counter mismatch. The prior v0.3.4 source and tag remain unchanged.
 
 ## 1. Inspect the prepared repository
 
 Use the root containing `README.md`, `package.json`, the userscript and `.github/`. The source archive intentionally omits private screenshots, old executable archives, earlier ad hoc logs, local runtime directories and any Git history. The original source/install hashes are recorded in `docs/provenance.json`.
 
-Run `npm run check` and `python scripts/run_browser_tests.py --include-origin-storage`, then `python scripts/package_release.py`. Compare the two resulting ZIP hashes with a second packaging run. Read [known limitations](KNOWN_LIMITATIONS.md) and the [draft release notes](releases/v0.3.4.md). Decide whether the prerelease scope and limitations are acceptable before publishing.
+Run `npm run check` and `python scripts/run_browser_tests.py --include-origin-storage`, then `python scripts/package_release.py`. Compare the two resulting ZIP hashes with a second packaging run. Read [known limitations](KNOWN_LIMITATIONS.md) and the [draft release notes](releases/v0.3.5.md). Decide whether the prerelease scope and limitations are acceptable before publishing.
 
 ## 2. Establish the repository without overwriting existing work
 
@@ -38,11 +38,11 @@ Enable Issues and private vulnerability reporting. Choose branch rules appropria
 
 ## 4. Publish the first prerelease
 
-After reviewing the exact commit and successful CI, tag that commit `v0.3.4` and create a GitHub release marked **prerelease**. Do not move an existing tag. Paste `docs/releases/v0.3.4.md` as the release description and attach:
+After reviewing the exact commit and successful CI, tag that commit `v0.3.5` and create a GitHub release after live acceptance. Do not move an existing tag. Paste `docs/releases/v0.3.5.md` as the release description and attach:
 
-- `dist/ChatGPT-Pro-Quota-Ledger-v0.3.4-Install.zip`
-- `dist/ChatGPT-Pro-Quota-Ledger-v0.3.4-Source.zip`
-- `dist/ChatGPT-Pro-Quota-Ledger-v0.3.4-SHA256SUMS.txt`
+- `dist/ChatGPT-Pro-Quota-Ledger-v0.3.5-Install.zip`
+- `dist/ChatGPT-Pro-Quota-Ledger-v0.3.5-Source.zip`
+- `dist/ChatGPT-Pro-Quota-Ledger-v0.3.5-SHA256SUMS.txt`
 
 The installation archive includes the userscript, `INSTALL.md` instructions and privacy notice, project license, provenance snapshot and upstream attribution. The source archive includes tests, documentation and publication tooling. Checksums bind bytes, not a cryptographic author signature.
 
